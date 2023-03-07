@@ -4,6 +4,7 @@ import viewsRoutes from './src/routes/views.router.js'
 import chatRoutes from './src/routes/chat.routes.js'
 import handlebars from 'express-handlebars'
 import cartRoutes from './src/routes/carts.routes.js'
+import sessionRoutes from './src/routes/session.routes.js'
 import mongoose from 'mongoose'
 import __dirname from './dirname.js'
 import chatDao from './src/dao/chatDao.js'
@@ -12,6 +13,10 @@ import path from 'path'
 import { Server } from 'socket.io'
 import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access'
 import initializePassport from './src/config/passport.config.js'
+import passport from 'passport'
+import cookieParser from 'cookie-parser'
+import cors from 'cors'
+
 const app = express()
 
 app.use(express.json())
@@ -32,19 +37,28 @@ app.engine('hbs', handlebars.engine({
 app.set('views', __dirname + '/src/views')
 app.set('view engine', 'hbs')
 app.use(express.static(path.join(__dirname, '/src/public')));
-
+app.use(cookieParser())
 
 // ROUTES  ✅
 app.use('/', viewsRoutes)
 app.use('/chat', chatRoutes)
 app.use('/api/products', productRoutes)
 app.use('/api/carts', cartRoutes)
+app.use("/session", sessionRoutes);
+
+app.use(
+  cors({
+    credentials: true,
+    origin:
+      process.env.NODE_ENV === "production"
+        ? process.env.CLIENT_URL
+        : "http://localhost:3000",
+  }));
 
 // PASSPORT  ✅
 initializePassport()
 app.use(passport.initialize())
-
-
+app.use(passport.session())
 
 // APLICACION DE BASE DE DATOS CON MONGOOSE ✅
 mongoose.set('strictQuery', false)

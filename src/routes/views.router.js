@@ -1,10 +1,15 @@
 import {Router} from 'express'
 import productDao from '../dao/productDao.js'
 import cartDao from '../dao/cartDao.js'
-
-
-
 const router = Router()
+
+
+
+router.get('/', (req,res) => {
+  res.send('Segunda Practica Integradora')
+})
+
+
 
 router.get('/products', async (req, res) => {
 
@@ -32,6 +37,7 @@ router.get('/carts/:cid', async (req, res) => {
     res.json({ error })
   }
 })
+
 
 
 export default router;

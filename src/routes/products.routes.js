@@ -1,7 +1,11 @@
 import { Router } from 'express'
 import { uploader } from '../utils/multer.js'
 import productDao from '../dao/productDao.js'
-import { productModel } from '../dao/models/products.models.js'
+import passport from 'passport'
+import passportCall from "../utils/passportCall.js";
+import authorization from "../utils/autorization.js";
+
+
 
 // ☐ IMPLEMENTAR MONGO PARA REGISTRAR TODO POR ATLAS
 
@@ -10,7 +14,7 @@ import { productModel } from '../dao/models/products.models.js'
 const router = Router()
 
 // METODO GET PARA LISTAR PRODUCTOS
-router.get('/', async (req, res) => {
+router.get('/',passportCall('jwt'),passport.authenticate('jwt', {session:false}),authorization(['admin']),async (req, res) => {
 
   let limit = parseInt(req.query.limit)
   // let query = JSON.parse(req.query.query) 
